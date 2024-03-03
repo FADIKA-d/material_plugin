@@ -45,12 +45,17 @@ Installer les dépendances
   composer install
 ```
 
+Compiler les assets
+
+```bash
+  php bin/console asset-map:compile
+```
+
 Démarrer le serveur web
 
 ```bash
   php -S 127.0.0.1:8000 -t public
 ```
-
 
 ## Technologies
 
