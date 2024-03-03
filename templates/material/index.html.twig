@@ -1,20 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MaterialController!{% endblock %}
+{% block title %}Liste du matériel{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
 <div class="example-wrapper">
+<h1 class="display-3">materials</h1>
     <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/AMPC026/material_plugin/src/Controller/MaterialController.php</code></li>
-        <li>Your template at <code>C:/Users/AMPC026/material_plugin/templates/material/index.html.twig</code></li>
-    </ul>
+    {# {% for material in materials %}
+		<ul>
+			<li><a href="">{{ material.name|upper }}</a></li>
+		</ul>
+	{% endfor %} #}
 </div>
 {% endblock %}
