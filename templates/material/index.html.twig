@@ -6,12 +6,33 @@
 
 <div class="example-wrapper">
 <h1 class="display-3">materials</h1>
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    {# <h1>Hello {{ controller_name }}! ✅</h1> #}
 
-    {# {% for material in materials %}
-		<ul>
-			<li><a href="">{{ material.name|upper }}</a></li>
-		</ul>
-	{% endfor %} #}
+	<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Nom</th>
+	  <th scope="col">Date de création</th>
+      <th scope="col">Prix HT</th>
+	  <th scope="col">Taux de TVA</th>
+      <th scope="col">prix TTC</th>
+	  <th scope="col">Quantité</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+	{% for material in materials %}
+	<tr>
+      <td><li><a href="">{{ material.name }}</a></li></td>
+      <td>{{ material.createdAt|date("d/m/Y") }}</td>
+      <td>{{ material.priceBeforeTax}}{{ 'EUR'|currency_symbol }}</td>
+	  <td>{{ (material.VAT.value)*100}} &percnt;</td>
+      <td>{{ material.priceIncVAT}}{{'EUR'|currency_symbol }}</td>
+      <td>{{ material.quantity}}</td>
+	</tr>
+	{% endfor %}
+    
+  </tbody>
+</table>
 </div>
 {% endblock %}

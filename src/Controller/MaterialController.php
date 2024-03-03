@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\MaterialRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,10 +10,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class MaterialController extends AbstractController
 {
     #[Route('/material', name: 'app_material')]
-    public function index(): Response
+    public function index(MaterialRepository $materialRepository): Response
     {
+        $materials = $materialRepository->findAll();
         return $this->render('material/index.html.twig', [
-            'controller_name' => 'MaterialController',
+            'materials' => $materials,
         ]);
     }
 }
