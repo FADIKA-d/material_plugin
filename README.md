@@ -50,6 +50,25 @@ Compiler les assets
 ```bash
   php bin/console asset-map:compile
 ```
+Configurer la base de données dans le fichier .env
+DATABASE_URL=
+Création de la base de données
+
+```bash
+  php bin/console doctrine:database:create 
+```
+
+Appliquer les migrations
+
+```bash
+  php bin/console doctrine:migrations:migrate
+```
+
+Charger les fixtures
+
+```bash
+  php bin/console doctrine:fixture:load  
+```
 
 Démarrer le serveur web
 
