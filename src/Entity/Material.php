@@ -32,7 +32,7 @@ class Material
     #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]
     private ?string $priceIncVAT = null;
 
-    #[ORM\ManyToOne(inversedBy: 'materials')]
+    #[ORM\ManyToOne(targetEntity: VAT::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?VAT $VAT = null;
 
