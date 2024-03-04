@@ -34,6 +34,13 @@ $(document).ready(function () {
       {
         target: [0, 2, 3, 4, 5],
         searchable: false
+      },
+      {
+        target: 5,
+        render: function (data, type) {
+          let created_at = new Date(data);
+          return formatDate(created_at);
+        },
       }
     ],
     columns: [
@@ -64,3 +71,17 @@ $(document).ready(function () {
     ],
   });
 });
+
+/**
+* Permet de convertir un objet date en chaine de caractère au format local FR
+* @param {Date} date 
+* @returns string
+*/
+function formatDate(date) {
+// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10
+let day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay();
+// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10. On ajoute 1 car les mois sont numéro de 0 à 11 en JS
+let month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+let year = date.getFullYear();
+return `${day}/${month}/${year}`
+}
