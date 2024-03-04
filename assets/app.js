@@ -27,14 +27,40 @@ $(document).ready(function () {
     ajax: url_path,
     processing: true,
     serverSide: true,
+    pageLength: 5,
+    paging: true,
+    lengthMenu: [5, 10, 15, 20, { label: "All", value: -1 }],
+    columnDefs: [
+      {
+        target: [0, 2, 3, 4, 5],
+        searchable: false
+      }
+    ],
     columns: [
-      //  "id", "name", "quantity", "createdAt", "priceBeforeTax", "priceIncVAT"
-      { data: "id" },
-      { data: "name" },
-      { data: "quantity" },
-      { data: "priceBeforeTax" },
-      { data: "priceIncVAT" },
-      { data: "createdAt" },
+      {
+        name: "id",
+        data: "id",
+      },
+      {
+        name: "name",
+        data: "name",
+      },
+      {
+        name: "quantity",
+        data: "quantity",
+      },
+      {
+        name: "priceBeforeTax",
+        data: "priceBeforeTax",
+      },
+      {
+        name: "priceIncVAT",
+        data: "priceIncVAT",
+      },
+      {
+        name: "createdAt",
+        data: "createdAt",
+      },
     ],
   });
 });

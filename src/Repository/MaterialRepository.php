@@ -45,4 +45,36 @@ class MaterialRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByCritaria(
+        int $offset,
+        int $limit,
+        string $column,
+        string $dir,
+        string $search
+    ): ?array {
+        $query = $this->createQueryBuilder('m');
+
+        if ($search) {
+            $query->where('m.name LIKE :search')
+                ->setParameter('search', "%{$search}%");
+        }
+
+        return $query->orderBy("m.{$column}", $dir)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()->getResult();
+        ;
+
+    }
+
+    public function getTotalRecords(): int
+    {
+        return $this->createQueryBuilder("m")->select('count(m.id)')->getQuery()->getSingleScalarResult();
+    }
+    public function countByFilteredRecords($search): int
+    {
+        return $this->createQueryBuilder("m")->select('count(m.id)')->where('m.name LIKE :search')
+        ->setParameter('search', "%{$search}%")->getQuery()->getSingleScalarResult();
+    }
 }
