@@ -15,24 +15,20 @@
 					<th scope="col">Nom</th>
 					<th scope="col">Quantité</th>
 					<th scope="col">Prix HT</th>
-					{# <th scope="col">Taux de TVA</th> #}
 					<th scope="col">prix TTC</th>
 					<th scope="col">Date de création</th>
 				</tr>
 			</thead>
-			<tbody>
-
-				{# {% for material in materials %}
-					<tr>
-				      <td><li><a href="">{{ material.name }}</a></li></td>
-				      <td>{{ material.createdAt|date("d/m/Y") }}</td>
-				      <td>{{ material.priceBeforeTax}}{{ 'EUR'|currency_symbol }}</td>
-					  <td>{{ (material.VAT.value)*100}} &percnt;</td>
-				      <td>{{ material.priceIncVAT}}{{'EUR'|currency_symbol }}</td>
-				      <td>{{ material.quantity}}</td>
-					</tr>
-					{% endfor %} #}
-			</tbody>
+			<tfooter>
+				<tr>
+					<th scope="col">id</th>
+					<th scope="col">Nom</th>
+					<th scope="col">Quantité</th>
+					<th scope="col">Prix HT</th>
+					<th scope="col">prix TTC</th>
+					<th scope="col">Date de création</th>
+				</tr>
+			</tfooter>
 		</table>
 	</div>
 	<script>
