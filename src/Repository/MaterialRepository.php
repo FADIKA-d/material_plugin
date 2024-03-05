@@ -77,4 +77,7 @@ class MaterialRepository extends ServiceEntityRepository
         return $this->createQueryBuilder("m")->select('count(m.id)')->where('m.name LIKE :search')
         ->setParameter('search', "%{$search}%")->getQuery()->getSingleScalarResult();
     }
+    // public function update(int $id): Material
+    // {
+    // }
 }
