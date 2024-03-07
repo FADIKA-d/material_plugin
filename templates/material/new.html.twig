@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau matériel
+{% endblock %}
+
+{% block body %}
+
+	<div class="px-4">
+		<h1 class="display-3">Nouveau matériel</h1>
+        
+        {% include "partials/_form.html.twig"  with {form : form} %}
+        
+	</div>
+	<script>
+    let url_path = "{{ url('app_material_index') }}"
+	</script>
+{% endblock %}

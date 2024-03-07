@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Material;
 use App\Form\MaterialType;
 use App\Repository\MaterialRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class MaterialController extends AbstractController
 {
+    
+    
     #[Route('/material', name: 'app_material_index')]
     public function index(MaterialRepository $materialRepository, Request $request): Response
     {
@@ -44,27 +47,70 @@ class MaterialController extends AbstractController
             );
         }
 
-        return $this->render('material/index.html.twig', []);
+return $this->render('material/index.html.twig', []);
+    }
+
+    // #[Route('/material', name: 'app_material_show')]
+    // public function show(MaterialRepository $materialRepository): Response
+    // {
+    //     $materials = $materialRepository;
+    //     return $this->render('/material/index.html.twig', [
+    //         'materials'=> $materials]);
+
+    // }
+    #[Route('/material/update/{id}', name: 'app_material_show')]
+    public function show(
+        int $id, 
+        MaterialRepository $materialRepository, 
+        Request $request,
+        EntityManagerInterface $em){
+
+        $material = $materialRepository->find($id);
+        $form = $this->createForm(MaterialType::class, $material);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($material);
+            $em->flush();
+            return $this->redirectToRoute('app_material_index');
+        }
+        return $this->render('material/update.html.twig', [
+            'form' => $form]);
     }
 
 
-    #[Route('/form', name: 'app_form_index')]
-    public function new(Request $request, MaterialRepository $materialRepository): Response
+    #[Route('/material/new', name: 'app_material_new')]
+    public function new(Request $request, EntityManagerInterface $em): Response
     {
         // creates a task object and initializes some data for this example
         $newMaterial = new Material();
-        // $newMaterial->setName($request->get('new name'));
-        // $newMaterial->setQuantity($request->get('5'));
-        // $newMaterial->setPriceBeforeTax($request->get('3'));
-        // $newMaterial->setPriceIncVAT($request->get('4'));
-        // $newMaterial->setVAT($request->get('5'));
-        // $newMaterial->setCreatedAt($request->get(date_create_immutable()));
 
         $form = $this->createForm(MaterialType::class, $newMaterial);
         $form->handleRequest($request);
-          return $this->render('form/form.html.twig', [
-            'form' => $form,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($newMaterial);
+            $em->flush();
+            return $this->redirectToRoute('app_material_index');
+        }
+          return $this->render('material/new.html.twig', [
+            'form' => $form->createView()
           ]);
+    }
+    #[Route('/material/decrement/{id}', name: 'app_material_decrement')]
+    public function decrementQ(int $id, 
+    MaterialRepository $materialRepository, 
+    Request $request,
+    EntityManagerInterface $em): Response {
+        $material = $materialRepository->find($id);
+        $quantity = $material->getQuantity();
+        if( $quantity > 1) {
+            $newQuantity = $quantity - 1;
+            $material->setQuantity($newQuantity);
+            $em->persist($material);
+            $em->flush();
+        };
+        return $this->render('material/index.html.twig', [
+            'id' => $material->getId()
+        ]);
     }
 
 
