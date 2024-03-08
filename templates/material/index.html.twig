@@ -53,159 +53,173 @@
 
 {% block customscript %}
 	<script>
-		let url_path = "{{ url('app_material_index') }}"
-		$(document).ready(function () {
-		var datatable = $("#material-list").DataTable({
-			ajax: url_path,
-			processing: true,
-			serverSide: true,
-			pageLength: 5,
-			paging: true,
-			lengthMenu: [5, 10, 15, 20, { label: "All", value: -1 }],
-			select: true,
-			responsive: {
-			details: {
-				display: DataTable.Responsive.display.modal({
-				header: function (row, type, val, meta) {
-					var data = row.data();
-					return "Details for " + data["name"];
-				},
-				}),
-				renderer: DataTable.Responsive.renderer.tableAll({
-				tableClass: "table",
-				}),
-			},
-			},
-			layout: {
-				top2End: {
-					buttons: ["pdfHtml5"],
-				},
-				bottomNEnd: {
-					buttons: [
-					{
-						action: function (e) {
-							e.stopPropagation();
-							this.popover("<div>I love popovers!</div>", {
-								popoverTitle: "Hello world",
-							});
-						},
+let url_path = "{{ url('app_material_index') }}"
+			$(document).ready(function () {
+			var datatable = $("#material-list").DataTable({
+				ajax: url_path,
+				processing: true,
+				serverSide: true,
+				pageLength: 5,
+				paging: true,
+				lengthMenu: [5, 10, 15, 20, { label: "All", value: -1 }],
+				select: true,
+				responsive: {
+				details: {
+					display: DataTable.Responsive.display.modal({
+					header: function (row, type, val, meta) {
+						var data = row.data();
+						return "Details for " + data["name"];
 					},
-					],
+					}),
+					renderer: DataTable.Responsive.renderer.tableAll({
+					tableClass: "table",
+					}),
 				},
-			},
-			language: {
-			url: "//cdn.datatables.net/plug-ins/2.0.1/i18n/fr-FR.json",
-			},
-			// buttons : true,
-			
-			columnDefs: [
+				},
+				layout: {
+					top2End: {
+						buttons: ["pdfHtml5"],
+					},
+					bottomNEnd: {
+						buttons: [
+						{
+							action: function (e) {
+								e.stopPropagation();
+								this.popover("<div>I love popovers!</div>", {
+									popoverTitle: "Hello world",
+								});
+							},
+						},
+						],
+					},
+				},
+				language: {
+				url: "//cdn.datatables.net/plug-ins/2.0.1/i18n/fr-FR.json",
+				},
+				// buttons : true,
+				
+				columnDefs: [
+					{
+	                    targets: 4,
+	                    data: function (row, type, val, meta) {
+	                        console.log("val")
+	                        console.log(row[0])
+	                        console.log(val)
+	                        return row[0]
+	                    }
+					},
 				{
-                    targets: 4,
-                    data: function (row, type, val, meta) {
-                        console.log("val")
-                        console.log(row[0])
-                        console.log(val)
-                        return row[0]
-                    }
+					target: [0, 2, 3, 4, 5, 6],
+					searchable: false,
 				},
-			{
-				target: [0, 2, 3, 4, 5, 6],
-				searchable: false,
-			},
-			{
-				target: [ -1, 3],
-				orderable: false,
-			},
-			{
-				target:[ -1, 3],
-				visible: true,
-			},
-			{
-				target: -1,
-				data: "id",
-				//   render:
-				// function (data) {
-				//   let link = '<a href="/material/update/'+ data +'">Modifier</a>'
-				//   return link;
+				{
+					target: [ -1, 3],
+					orderable: false,
+				},
+				{
+					target:[ -1, 3],
+					visible: true,
+				},
+				{
+					target: -1,
+					data: "id",
+					//   render:
+					// function (data) {
+					//   let link = '<a href="/material/update/'+ data +'">Modifier</a>'
+					//   return link;
+	
+					// },
+					//   if( table.rows( { selected: true } ).count() == table.data().count()){
+					//     table.rows().deselect();
+					// }
+				},
+				],
+				columns: [
+				{
+					name: "id",
+					data: "id",
+				},
+				{
+					name: "name",
+					data: "name",
+				},
+				{
+					name: "quantity",
+					data: "quantity",
+				},
+				{
+					name: "decrement",
+					data: null,
+					className: "decrement"
+				},
+				{
+					name: "priceBeforeTax",
+					data: "priceBeforeTax",
+				},
+				{
+					name: "priceIncVAT",
+					data: "priceIncVAT",
+				},
+				{
+					name: "createdAt",
+					data: "createdAt",
+				},
+				{
+					name: "modifier",
+					data: "id",
+					// render: function (data) {
+					//   // let link = '<a href="/material/update/'+ data +'">Modifier</a>'
+					//   // return [link, "a"];
+					//   let details = '<a href="/material/update/' + data + '">Voir</a>';
+					//   let update = '<a href="/material/update/' + data + '">Modifier</a>';
+					//   let decrement =
+					//     '<a href="/material/update/' + data + '">Décrémenter</a>';
+					//   return [details, update, decrement];
+					// },
+				},
+				],
+			});
+			
+			datatable.on('click','td.decrement', function(){
+				var cell = datatable.cell(this);
+				var row = datatable.cell(this).render('sort');
+				
+				var id = row["id"];
+	
+				datatable.on('preXhr.dt', function (e, settings, data) {
+				data.material_id = id;
+				})
+				
+				cell.data(cell.data()-1).draw();
+				console.log(datatable.cell().node());
+ var test = datatable.cell().node();
+ $(test).css('color', 'red');
+ console.log(test);
+			})
+			});
+	
+			/**
+			* Permet de convertir un objet date en chaine de caractère au format local FR
+			* @param {Date} date
+			* @returns string
+			*/
+			function formatDate(date) {
+			// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10
+			let day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay();
+			// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10. On ajoute 1 car les mois sont numéro de 0 à 11 en JS
+			let month =
+				date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+			let year = date.getFullYear();
+			return `${day}/${month}/${year}`;
+			}
+			function decrement(data) {
+			var quantity = data.quantity;
+			if (quantity > 1) {
+				var newQuantity = quantity - 1;
+			}
+			return newQuantity;
+			}
 
-				// },
-				//   if( table.rows( { selected: true } ).count() == table.data().count()){
-				//     table.rows().deselect();
-				// }
-			},
-			],
-			columns: [
-			{
-				name: "id",
-				data: "id",
-			},
-			{
-				name: "name",
-				data: "name",
-			},
-			{
-				name: "quantity",
-				data: "quantity",
-			},
-			{
-				name: "decrement",
-				data: "quantity",
-			},
-			{
-				name: "priceBeforeTax",
-				data: "priceBeforeTax",
-			},
-			{
-				name: "priceIncVAT",
-				data: "priceIncVAT",
-			},
-			{
-				name: "createdAt",
-				data: "createdAt",
-			},
-			{
-				name: "modifier",
-				data: "id",
-				// render: function (data) {
-				//   // let link = '<a href="/material/update/'+ data +'">Modifier</a>'
-				//   // return [link, "a"];
-				//   let details = '<a href="/material/update/' + data + '">Voir</a>';
-				//   let update = '<a href="/material/update/' + data + '">Modifier</a>';
-				//   let decrement =
-				//     '<a href="/material/update/' + data + '">Décrémenter</a>';
-				//   return [details, update, decrement];
-				// },
-			},
-			],
-		});
-		// hook into the event to display/hide the row details modal
-		console.log(datatable)
-		datatable.on( 'responsive-display', function ( e, datatable, row, showHide, update ) {
-    	console.log( 'Details for row '+row.index()+' '+(showHide ? 'shown' : 'hidden') );
-		});
-		});
-
-		/**
-		* Permet de convertir un objet date en chaine de caractère au format local FR
-		* @param {Date} date
-		* @returns string
-		*/
-		function formatDate(date) {
-		// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10
-		let day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay();
-		// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10. On ajoute 1 car les mois sont numéro de 0 à 11 en JS
-		let month =
-			date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
-		let year = date.getFullYear();
-		return `${day}/${month}/${year}`;
-		}
-		function decrement(data) {
-		var quantity = data.quantity;
-		if (quantity > 1) {
-			var newQuantity = quantity - 1;
-		}
-		return newQuantity;
-		}
 		
 	</script>
 {% endblock %}

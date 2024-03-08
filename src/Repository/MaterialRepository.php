@@ -56,9 +56,11 @@ class MaterialRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('m');
 
         if ($search) {
-            $query->where('m.name LIKE :search')
+            $query->andWhere('m.name LIKE :search')
                 ->setParameter('search', "%{$search}%");
         }
+        
+        $query->andWhere('m.quantity > 0');
 
         return $query->orderBy("m.{$column}", $dir)
             ->setFirstResult($offset)

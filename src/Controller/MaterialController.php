@@ -16,7 +16,9 @@ class MaterialController extends AbstractController
     
     
     #[Route('/material', name: 'app_material_index')]
-    public function index(MaterialRepository $materialRepository, Request $request): Response
+    public function index( EntityManagerInterface $em,
+        MaterialRepository $materialRepository, 
+        Request $request): Response
     {
         // Tester l'existance d'une requête AJAX
         if ($request->isXmlHttpRequest()) {
@@ -27,6 +29,16 @@ class MaterialController extends AbstractController
             $column = htmlentities($data['order'][0]['name']);
             $dir = htmlentities($data['order'][0]['dir']);
             $search = htmlentities($data['search']['value']);
+
+            $material_id = $request->query->get('material_id');
+
+            if($material_id) {
+                $material = $materialRepository->find($material_id);
+                if($material->getQuantity() > 0) {
+                    $material->setQuantity($material->getQuantity() - 1);
+                    $em->flush();
+                }
+            };
 
             $materials = $materialRepository->findByCritaria(
                 $offset,
@@ -95,23 +107,23 @@ return $this->render('material/index.html.twig', []);
             'form' => $form->createView()
           ]);
     }
-    #[Route('/material/decrement/{id}', name: 'app_material_decrement')]
-    public function decrementQ(int $id, 
-    MaterialRepository $materialRepository, 
-    Request $request,
-    EntityManagerInterface $em): Response {
-        $material = $materialRepository->find($id);
-        $quantity = $material->getQuantity();
-        if( $quantity > 1) {
-            $newQuantity = $quantity - 1;
-            $material->setQuantity($newQuantity);
-            $em->persist($material);
-            $em->flush();
-        };
-        return $this->render('material/index.html.twig', [
-            'id' => $material->getId()
-        ]);
-    }
+    // #[Route('/material/decrement/{id}', name: 'app_material_decrement')]
+    // public function decrementQ(int $id, 
+    // MaterialRepository $materialRepository, 
+    // Request $request,
+    // EntityManagerInterface $em): Response {
+    //     $material = $materialRepository->find($id);
+    //     $quantity = $material->getQuantity();
+    //     if( $quantity > 1) {
+    //         $newQuantity = $quantity - 1;
+    //         $material->setQuantity($newQuantity);
+    //         $em->persist($material);
+    //         $em->flush();
+    //     };
+    //     return $this->render('material/index.html.twig', [
+    //         'id' => $material->getId()
+    //     ]);
+    // }
 
 
     // #[Route('/material', name: 'app_material_index')]
