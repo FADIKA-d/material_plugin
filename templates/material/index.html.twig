@@ -95,11 +95,13 @@
 								var id = data["id"];
 								var id_name
 								var param = {id: ~ "id" };
-								var path = "path('app_material_show' : " + id +")";
-								let link = '<a href="{{'path' }}">Modifier</a>'
+								var path = "path('app_material_show', {'id' : " + id +" })";
+								console.log(path);
+								
+								let link = '<a href="{{ ' + path '}}">Modifier</a>';
 								// let url = '/material/update/'+id;
 								//var link = "{{path('app_material_show', {id: "id"}) }}";
-								
+								return link; 
 								console.log(link);
 						
 								//var link = {[path + param] |join} ;
