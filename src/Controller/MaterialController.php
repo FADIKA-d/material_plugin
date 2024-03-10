@@ -18,7 +18,8 @@ class MaterialController extends AbstractController
     #[Route('/material', name: 'app_material_index')]
     public function index( EntityManagerInterface $em,
         MaterialRepository $materialRepository, 
-        Request $request): Response
+        Request $request,
+        ): Response
     {
         // Tester l'existance d'une requête AJAX
         if ($request->isXmlHttpRequest()) {

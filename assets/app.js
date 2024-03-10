@@ -144,7 +144,14 @@ import "./styles/app.css";
 //     ],
 //   });
 // });
-
+	//datatable.buttons('.update').disable();
+//   $('update').on('click', function(){
+//     console.log('row');
+//    var tr = $(this).closest('button.dt-button.update');
+//    console.log('tr',tr),
+//     var row = datatable.row['tr'],
+//     console.log(row);
+//  })
 // /**
 //  * Permet de convertir un objet date en chaine de caractère au format local FR
 //  * @param {Date} date
