@@ -30,7 +30,7 @@ Pour exécuter ce projet, vous devez ajouter les variables d'environnement suiva
 Cloner le projet
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/FADIKA-d/material_plugin.git
 ```
 
 Se déplacer dans le répertoire du projet
