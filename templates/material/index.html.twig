@@ -100,7 +100,8 @@
 								
 								let link = '<a href="{{ ' + path '}}">Modifier</a>';
 								// let url = '/material/update/'+id;
-								//var link = "{{path('app_material_show', {id: "id"}) }}";
+								//var link = "'app_material_show', {id: " + id + "}";
+								window.location ='/material/update/' + id ;
 								return link; 
 								console.log(link);
 						

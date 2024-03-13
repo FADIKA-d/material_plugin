@@ -45,7 +45,7 @@ Installer les dépendances
   composer install
 ```
 
-Compiler les assets
+Installer et Compiler les assets
 
 ```bash
   php bin/console asset-map:compile
@@ -59,6 +59,10 @@ Création de la base de données
 ```
 
 Appliquer les migrations
+
+```bash
+  php bin/console importmap:install   
+```
 
 ```bash
   php bin/console doctrine:migrations:migrate
