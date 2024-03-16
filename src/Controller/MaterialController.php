@@ -21,6 +21,8 @@ class MaterialController extends AbstractController
         Request $request,
         ): Response
     {
+
+        $resData = ['is_send_mess' => false];
         // Tester l'existance d'une requête AJAX
         if ($request->isXmlHttpRequest()) {
             // On récupère tous les paramètres d'url ($_GET)
@@ -33,13 +35,37 @@ class MaterialController extends AbstractController
 
             $material_id = $request->query->get('material_id');
 
+            
             if($material_id) {
                 $material = $materialRepository->find($material_id);
-                if($material->getQuantity() > 0) {
+                $quantity = $material->getQuantity();
+                if($quantity > 0) {
+                    $new_Quantity = $material->getQuantity() - 1;
+                    
+                    if($new_Quantity === 0) {
+                        $mailerService->sendEmail(
+                            subject : "Message d'alerte",
+                            from : "material_plugin@exemple.fr",
+                            to : "administrateur@exemple.fr",
+                            template: "email/email_alert.html.twig", 
+                            data: [
+                                "material_name"=> $material->getName()
+                            ],
+                           
+                            );
+                            //$messageService->addSuccess("Un email a été envoyé à l'administrateur");
+           
+                    } else {
+                        $resData['is_send_mess'] = true;
+                    }
                     $material->setQuantity($material->getQuantity() - 1);
                     $em->flush();
-                }
-            };
+                    
+                  
+            
+
+           
+            }};
 
             $materials = $materialRepository->findByCritaria(
                 $offset,
@@ -50,12 +76,13 @@ class MaterialController extends AbstractController
             );
 
             return $this->json(
+                array_merge($resData,
                 [
                     'data' => $materials,
                     'draw' => intval($data['draw']),
                     "recordsTotal" => $materialRepository->getTotalRecords(),
                     "recordsFiltered" => $search ? $materialRepository->countByFilteredRecords($search) : $materialRepository->getTotalRecords()
-                ],
+                ]),
                 headers: ['Content-Type' => 'application/json;charset=UTF-8']
             );
         }
@@ -63,14 +90,6 @@ class MaterialController extends AbstractController
 return $this->render('material/index.html.twig', []);
     }
 
-    // #[Route('/material', name: 'app_material_show')]
-    // public function show(MaterialRepository $materialRepository): Response
-    // {
-    //     $materials = $materialRepository;
-    //     return $this->render('/material/index.html.twig', [
-    //         'materials'=> $materials]);
-
-    // }
     #[Route('/material/update/{id}', name: 'app_material_show')]
     public function show(
         int $id, 
@@ -108,47 +127,4 @@ return $this->render('material/index.html.twig', []);
             'form' => $form->createView()
           ]);
     }
-    // #[Route('/material/decrement/{id}', name: 'app_material_decrement')]
-    // public function decrementQ(int $id, 
-    // MaterialRepository $materialRepository, 
-    // Request $request,
-    // EntityManagerInterface $em): Response {
-    //     $material = $materialRepository->find($id);
-    //     $quantity = $material->getQuantity();
-    //     if( $quantity > 1) {
-    //         $newQuantity = $quantity - 1;
-    //         $material->setQuantity($newQuantity);
-    //         $em->persist($material);
-    //         $em->flush();
-    //     };
-    //     return $this->render('material/index.html.twig', [
-    //         'id' => $material->getId()
-    //     ]);
-    // }
-
-
-    // #[Route('/material', name: 'app_material_index')]
-    // public function updateOneMaterial(MaterialRepository $materialRepository, Request $request, int $id): Response
-    // {
-    //     // $materialToUpdate = new Material();
-        
-
-    //     $materialToUpdate = $materialRepository->getRepository(MaterialController::class)->find($id);
-    //     if (!$materialToUpdate) {
-    //         throw $this->createNotFoundException('No product found for id' .$id);
-    //     }
-
-    //     $materialToUpdate->setName($request->get('new name'));
-    //     $materialToUpdate->setQuantity($request->get('5'));
-    //     $materialToUpdate->setPriceBeforeTax($request->get('3'));
-    //     $materialToUpdate->setPriceIncVAT($request->get('4'));
-    //     $materialToUpdate->setVAT($request->get('5'));
-    //     $materialRepository->setCreatedAt($request->get(date('Y-m-d')));
-
-    //     // $materialRepository->persist($materialToUpdate);
-    //     $materialRepository->flush();
-
-    //     return new Response('Save new product',200);
-    //     // return $this->redirectToRoute('app_material_index');
-    // }
 }

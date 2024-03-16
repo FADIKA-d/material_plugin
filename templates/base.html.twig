@@ -45,8 +45,8 @@
             <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
 			<script src="https://cdn.datatables.net/responsive/3.0.0/js/dataTables.responsive.js"></script>
 			<script src="https://cdn.datatables.net/responsive/3.0.0/js/responsive.bootstrap5.js"></script>
-    <script
-        src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.1/b-3.0.0/b-html5-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
+			<script
+				src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.1/b-3.0.0/b-html5-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
 
             {% block customscript %}{% endblock %}
 
@@ -56,9 +56,14 @@
 		{% endblock %}
 	</head>
 	<body>
+		{% include "partials/_toast.html.twig" %}
 		<main>
+		
 			{% include "partials/_nav.html.twig" %}
-			{% block body %}{% endblock %}
+			
+			{% block body %}
+			{% endblock %}
+		
 		</main>
 
 	</body>

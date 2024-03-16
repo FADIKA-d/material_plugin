@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}Liste du matériel
 {% endblock %}
 
+
 {% block body %}
- 
 	<div class="px-4">
+	
 		<h1 class="display-3">Stock de materiel</h1>
 		{# <div>
 				{% for material in materials %}
@@ -80,11 +82,24 @@
 				},
 				},
 				layout: {
-					top2End: {
-						buttons: ["pdfHtml5"],
-					},
-					bottomNEnd: {
+					top2Start: {
 						buttons: [
+						{	
+							text : 'Ajouter',
+							className : 'update', 
+							action: function (e, dt, button, config) {
+								
+								var data = dt.row({ selected: true }).data();
+								var id = data["id"];
+								var param = {id: ~ "id" };
+								var path = "path('app_material_show', {'id' : " + id +" })";
+								console.log(path);
+								let link = '<a href="{{ ' + path '}}">Modifier</a>';
+								return link; 
+								console.log(link);
+								window.location ='/material/update/' + id ;
+							},
+						},
 						{	
 							extend: 'selected',
 							text : 'Modifier',
@@ -93,28 +108,20 @@
 								
 								var data = dt.row({ selected: true }).data();
 								var id = data["id"];
-								var id_name
 								var param = {id: ~ "id" };
 								var path = "path('app_material_show', {'id' : " + id +" })";
 								console.log(path);
-								
 								let link = '<a href="{{ ' + path '}}">Modifier</a>';
-								// let url = '/material/update/'+id;
-								//var link = "'app_material_show', {id: " + id + "}";
-								window.location ='/material/update/' + id ;
 								return link; 
 								console.log(link);
-						
-								//var link = {[path + param] |join} ;
-								//console.log(link);
-								//return link;
-								/*let link = '<a href="/material/update/'+ id +'">Modifier</a>'
-								 return link;
-								e.stopPropagation();
-								this.popover("app_material_new");*/
+								window.location ='/material/update/' + id ;
 							},
 						},
+						
 						],
+					},
+					top2End: {
+						buttons: ["pdfHtml5"],
 					},
 				},
 				
@@ -206,22 +213,26 @@
 
 			datatable.on('click','td.decrement', function(){
 				var cell = datatable.cell(this);
-				console.log("cell",cell);
 				var row = datatable.cell(this).render();
-				console.log("row",row);
 				var id = row["id"];
-				console.log("id",id);
 				datatable.on('preXhr.dt', function (e, settings, data) {
 				data.material_id = id;
 				});
-				
+
 				cell.data(cell.data()-1).draw();
-				console.log(datatable.cell().node());
 
 			});
-		
-		
-			
+
+			datatable.on('xhr', function() {
+				var json = datatable.ajax.json();
+    			
+				if(json.is_send_mess){
+					const toast = document.getElementById('liveToast')
+					console.log(toast);
+					const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast)
+					toastBootstrap.show()
+			}
+		})
 	});
 			function update(id){
 				 let update = '<a href="/material/update/' + id + '">Modifier</a>';
