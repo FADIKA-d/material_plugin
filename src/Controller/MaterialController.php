@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Material;
 use App\Form\MaterialType;
 use App\Repository\MaterialRepository;
+use App\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,7 @@ class MaterialController extends AbstractController
     public function index( EntityManagerInterface $em,
         MaterialRepository $materialRepository, 
         Request $request,
+        MailerService $mailerService,
         ): Response
     {
 
@@ -53,18 +55,12 @@ class MaterialController extends AbstractController
                             ],
                            
                             );
-                            //$messageService->addSuccess("Un email a été envoyé à l'administrateur");
+                            $resData['is_send_mess'] = true;
            
-                    } else {
-                        $resData['is_send_mess'] = true;
-                    }
+                    } 
                     $material->setQuantity($material->getQuantity() - 1);
                     $em->flush();
                     
-                  
-            
-
-           
             }};
 
             $materials = $materialRepository->findByCritaria(
@@ -106,7 +102,9 @@ return $this->render('material/index.html.twig', []);
             return $this->redirectToRoute('app_material_index');
         }
         return $this->render('material/update.html.twig', [
-            'form' => $form]);
+            'form' => $form->createView(), 
+            'id' => $id,
+        ]);
     }
 
 

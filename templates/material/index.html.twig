@@ -6,50 +6,35 @@
 
 
 {% block body %}
-	<div class="px-4">
+	<div class="flex-grow-1 px-4">
 	
-		<h1 class="display-3">Stock de materiel</h1>
-		{# <div>
-				{% for material in materials %}
-				<li>{{material.name}}</li>
-				{% endfor %}
-				</div> #}
-		{# <div style="max-width: 40vw"> #}
+		<h1 class="text-center my-5">Stock de materiel</h1>
 		<table style="width: 100%" id="material-list" class="table table-hover table-striped nowrap">
 			<thead>
 				<tr>
-					<th scope="col">id</th>
-					<th scope="col">Nom</th>
-					<th scope="col">Date de création</th>
-					<th scope="col">Prix HT</th>
-					<th scope="col">prix TTC</th>
-					<th scope="col">Quantité</th>
-					<th scope="col">Décrémenter</th>
-					<th scope="col">m</th>
+					<th class="text-center" scope="col">id</th>
+					<th class="text-center" scope="col">Nom</th>
+					<th class="text-center" scope="col">Date de création</th>
+					<th class="text-center" scope="col">Prix HT</th>
+					<th class="text-center" scope="col">TVA</th>
+					<th class="text-center" scope="col">Prix TTC</th>
+					<th class="text-center" scope="col">Quantité</th>
+					<th class="text-center" scope="col">Décrémenter</th>
 				</tr>
 			</thead>
 			<tfooter>
 				<tr>
-					<th scope="col">id</th>
-					<th scope="col">Nom</th>
-					<th scope="col">Date de création</th>
-					<th scope="col">Prix HT</th>
-					<th scope="col">prix TTC</th>
-					<th scope="col">Quantité</th>
-					<th scope="col"></th>
-					<th
-						scope="col">
-						{# <button><a class="btn btn-primary" href="{{ path('app_material_minus', {id: data}) }}" role="button">Décrémenter</button> #}
-						<button type="button" class="btn">Modifier</button>
-						<button type="button" class="btn">voir</button>
-					</th>
+					<th class="text-center" scope="col">id</th>
+					<th class="text-center" scope="col">Nom</th>
+					<th class="text-center" scope="col">Date de création</th>
+					<th class="text-center" scope="col">Prix HT</th>
+					<th class="text-center" scope="col">TVA</th>
+					<th class="text-center" scope="col">Prix TTC</th>
+					<th class="text-center" scope="col">Quantité</th>
+					<th class="text-center" scope="col"></th>
 				</tr>
 			</tfooter>
 		</table>
-		{# </div> #}
-		<button>
-			<a class="btn btn-primary" href="{{ path('app_material_new') }}" role="button">Ajouter</a>
-		</button>
 	</div>
 {% endblock %}
 
@@ -60,10 +45,22 @@
 			var datatable = $("#material-list").DataTable({
 				ajax: url_path,
 				language: {
-				url: "//cdn.datatables.net/plug-ins/2.0.1/i18n/fr-FR.json",
+				"info": "Affichage de _START_ à  _END_ sur _TOTAL_ entrées",
+    			"infoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+    			"infoFiltered": "(filtrées depuis un total de _MAX_ entrées)",
+   				"lengthMenu": "Afficher _MENU_ entrées",
+    			"paginate": {
+        			"first": "Première",
+        			"last": "Dernière",
+        			"next": "Suivante",
+        			"previous": "Précédente"
+    			},
+    			"zeroRecords": "",
+				"search": "Recherche",
 				},
 				processing: true,
 				serverSide: true,
+				//info: false,
 				pageLength: 5,
 				paging: true,
 				lengthMenu: [5, 10, 15, 20, { label: "All", value: -1 }],
@@ -73,7 +70,7 @@
 					display: DataTable.Responsive.display.modal({
 					header: function (row, type, val, meta) {
 						var data = row.data();
-						return "Details for " + data["name"];
+						return "Details pour " + data["name"];
 					},
 					}),
 					renderer: DataTable.Responsive.renderer.tableAll({
@@ -87,17 +84,8 @@
 						{	
 							text : 'Ajouter',
 							className : 'update', 
-							action: function (e, dt, button, config) {
-								
-								var data = dt.row({ selected: true }).data();
-								var id = data["id"];
-								var param = {id: ~ "id" };
-								var path = "path('app_material_show', {'id' : " + id +" })";
-								console.log(path);
-								let link = '<a href="{{ ' + path '}}">Modifier</a>';
-								return link; 
-								console.log(link);
-								window.location ='/material/update/' + id ;
+							action: function () {
+								window.location ='/material/new/';
 							},
 						},
 						{	
@@ -108,15 +96,25 @@
 								
 								var data = dt.row({ selected: true }).data();
 								var id = data["id"];
-								var param = {id: ~ "id" };
-								var path = "path('app_material_show', {'id' : " + id +" })";
-								console.log(path);
-								let link = '<a href="{{ ' + path '}}">Modifier</a>';
-								return link; 
-								console.log(link);
+								
 								window.location ='/material/update/' + id ;
 							},
 						},
+						{
+							extend: 'selected',
+							text : 'Détails',
+							className : 'details', 
+                    		action: function (e, dt, button, config) {
+								var data = dt.row({ selected: true }).data();
+								let created_at = new Date(data["createdAt"]);
+								var date = formatDate(created_at);
+								
+                        	//e.stopPropagation();
+                        	this.popover(' <div class="row"><div class="col-md-10"><p class="ms-3">Quantité <span class="badge bg-secondary">'+ data["quantity"]+'</span></p><ul class="list-group list-group-horizontal-lg my-2 ms-2 w-100"><li class="list-group-item list-group-item-light ms-2 w-50 align-items-center">Prix HT</li><li class="list-group-item w-50 align-items-center">'+ data["priceBeforeTax"]+'€</li></ul><ul class="list-group list-group-horizontal-lg my-2 ms-2 w-100 "><li class="list-group-item list-group-item-light ms-2 w-50 align-items-center">TVA</li><li class="list-group-item w-50 align-items-center">'+  (data.VAT.value)*100+'%</li></ul><ul class="list-group list-group-horizontal-lg my-2 ms-2 w-100"><li class="list-group-item list-group-item-light ms-2 w-50 align-items-center">Prix TTC</li><li class="list-group-item w-50 align-items-center">'+ data["priceIncVAT"]+'€</li></ul> <p class="ms-3">Date de création : '+ date +'</p></div></div>', {
+							popoverTitle: '<p class="lead align-self-end justify-content-end ">Infos produit </p>',
+                        });
+                    }
+                },
 						
 						],
 					},
@@ -129,25 +127,20 @@
 				
 				columnDefs: [
 				{
+					target: '_all', 
+					className: 'dt-center'
+				},
+				{
+					target: [0], 
+					 visible: false,
+				},
+				{
 					target: [0, 2, 3, 4, 5, 6],
 					searchable: false,
 				},
 				{
-					target: [ 3, 6],
+					target: [ 7],
 					orderable: false,
-				},
-				{
-					target: 6,
-					data: "id",
-					//   render:
-					// function (data) {
-					//   let link = '<a href="/material/update/'+ data +'">Modifier</a>'
-					//   return link;
-	
-					// },
-					//   if( table.rows( { selected: true } ).count() == table.data().count()){
-					//     table.rows().deselect();
-					// }
 				},
 				{
 				target: 2,
@@ -175,6 +168,15 @@
 					data: "priceBeforeTax",
 				},
 				{
+					name: "VAT",
+					data: "VAT",
+					render: function(data){
+            // Insérer ici la logique pour afficher les valeurs de l'objet
+					var VATValue = (data.value)*100;
+            		return  VATValue + "%"; 
+        		},
+				},
+				{
 					name: "priceIncVAT",
 					data: "priceIncVAT",
 				},
@@ -187,25 +189,12 @@
 					data: null,
 					className: "decrement",
 					render: function(data, type, row ) {
-						return `<button class=" decrement btn btn-sm btn-secondary d-flex align-items-center">
+						return `<button class="dt-center decrement btn btn-sm btn-secondary">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-lg" viewBox="0 0 16 16">
   								<path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8"/>
 							</svg>
 						</button>`
 					}
-				},
-				{
-					name: "modifier",
-					data: "id",
-					// render: function (data) {
-					//   // let link = '<a href="/material/update/'+ data +'">Modifier</a>'
-					//   // return [link, "a"];
-					//   let details = '<a href="/material/update/' + data + '">Voir</a>';
-					//   let update = '<a href="/material/update/' + data + '">Modifier</a>';
-					//   let decrement =
-					//     '<a href="/material/update/' + data + '">Décrémenter</a>';
-					//   return [details, update, decrement];
-					// },
 				},
 				],
 				
@@ -253,13 +242,7 @@
 			let year = date.getFullYear();
 			return `${day}/${month}/${year}`;
 			}
-			/*function decrement(data) {
-			var quantity = data.quantity;
-			if (quantity > 1) {
-				var newQuantity = quantity - 1;
-			}
-			return newQuantity;
-			}*/
+		
 
 		
 	</script>

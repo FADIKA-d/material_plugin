@@ -1,8 +1,42 @@
-<div class="px-4">
-    {{ form_start(form) }}
-        <div class="row">
-        {{ form_widget(form) }}
-        </div>
-    <button>Valider</button>
-    {{ form_end(form) }}
-</div>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+        {{ form_start(form, {'action': route_path, attr: { id: 'material_form' } }) }}
+            {# <div class="row"> #}
+            {{ form_widget(form) }}
+            {# </div> #}
+            <div class="d-grid gap-3">
+                <button class="btn btn-primary">Valider</button>
+            </div>
+    </div>
+    {{ form_end(form) }}</div>
+
+
+<script>
+    const form = document.getElementById('material_form');
+    const form_select_VAT = document.getElementById('material_VAT');
+    const form_select_priceIncVAT = document.getElementById('material_priceIncVAT');
+    const form_select_priceBeforeTax = document.getElementById('material_priceBeforeTax');
+   
+    // Écoute de l'événement 'change' sur cet élément
+    //form_select_VAT.addEventListener('change', (e) => changeOptions(e));
+    form_select_VAT.addEventListener('change', function(event) {
+    // Accéder à la nouvelle valeur modifiée
+    var newValue = Number(event.target.value);
+    form_select_priceIncVAT.value = (form_select_priceBeforeTax.value * (1+ newValue)).toFixed(2);
+    console.log(form_select_priceBeforeTax.value );
+    });
+
+    form_select_priceBeforeTax.addEventListener('change', function(event) {
+        // Accéder à la nouvelle valeur modifiée
+        var newValue = Number(event.target.value);
+        form_select_priceIncVAT.value = (newValue * (1+ Number(form_select_VAT.value))).toFixed(2);
+    });
+    
+    form_select_priceIncVAT.addEventListener('change', function(event) {
+        // Accéder à la nouvelle valeur modifiée
+        var newValue = Number(event.target.value);
+        form_select_priceBeforeTax.value = (newValue * (1 - Number(form_select_VAT.value))).toFixed(2);
+    });
+
+
+</script>

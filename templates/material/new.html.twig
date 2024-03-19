@@ -5,13 +5,13 @@
 
 {% block body %}
 
-	<div class="px-4">
-		<h1 class="display-3">Nouveau matériel</h1>
+	<div class="flex-grow-1 px-4">
+		<h1 class="text-center my-5">Nouveau matériel</h1>
         
-        {% include "partials/_form.html.twig"  with {form : form} %}
+        {% include "partials/_form.html.twig"  with {form : form, route_path: path('app_material_new')} %}
         
 	</div>
-	<script>
+	{# <script>
     let url_path = "{{ url('app_material_index') }}"
-	</script>
+	</script> #}
 {% endblock %}
