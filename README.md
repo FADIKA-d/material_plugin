@@ -9,6 +9,14 @@ Module permettant de gérer le stock de matériel d'une entreprise.
 - Composer
 - MySQL ou MariaDB ou Postgre
 
+## Technologies
+
+**Client:** Bootstrap, DataTable
+
+**Server:** Symfony
+
+**DevOps** Docker
+
 ## Variables d'environnement
 
 Pour exécuter ce projet, vous devez ajouter les variables d'environnement suivantes à votre fichier .env
@@ -85,6 +93,7 @@ Démarrer le serveur web
 ```bash
   php -S 127.0.0.1:8000 -t public
 ```
+visiter le site [http://localhost:8000](http://localhost:8000)
 
 ## Envoi de mails
 
@@ -103,11 +112,5 @@ Démarrer le bus messenger pour le traitement asynchrone des messages
 ```bash
   php bin/console messenger:consume -vv
 ```
- 
-## Technologies
 
-**Client:** Bootstrap, DataTable
-
-**Server:** Symfony
-
-**Docker** Docker
+ouvrir le client mail [http://localhost:8025](http://localhost:8025)
