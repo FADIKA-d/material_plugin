@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\EventSubscriber\MaterialEventSubscriber;
-use App\EventSubscriber\PriceBeforeTaxFieldSubscriber;
 use App\Entity\Material;
 use App\Entity\VAT;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -53,8 +52,6 @@ class MaterialType extends AbstractType
             ])
         ;
 
-        //$builder->addEventSubscriber(new AddPriceBeforeTaxFieldSubscriber());
-        $builder->addEventSubscriber(new PriceBeforeTaxFieldSubscriber());
         $builder->addEventSubscriber(new MaterialEventSubscriber());
        $builder->getForm();
 

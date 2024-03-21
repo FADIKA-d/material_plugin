@@ -16,21 +16,14 @@ class MaterialEventSubscriber implements EventSubscriberInterface
         $VAT = $material["VAT"];
         $priceIncVAT = implode('.', explode(',', $material["priceIncVAT"]));
 
-      //dd($priceBeforeTax, $VAT, $priceIncVAT);
-     
-      //dd($priceIncVAT);
-       //dd($material["priceBeforeTax"] , $form->get("priceBeforeTax")->getData());
 
-       
        if(isset($VAT) && ($form->get("VAT")->getData() !== $VAT)) {
             
         if(isset($priceBeforeTax)){
             
             $newPriceIncVAT = $priceBeforeTax * (1 + $VAT);
-            //$material["priceIncVAT"] = $newPriceIncVAT;
-            //$form->setData($material);
             $form->get('priceIncVAT')->setData((string)$newPriceIncVAT);
-            //$form->get('priceIncVAT')->setData('2');
+
         } else if(isset($priceIncVAT)){
             $newPriceBeforeTax = $priceIncVAT / (1 + $VAT);
             $form->get('priceBeforeTax')->setData((string)$newPriceBeforeTax);
@@ -38,13 +31,13 @@ class MaterialEventSubscriber implements EventSubscriberInterface
     }
 
         if(isset($priceBeforeTax) && ($form->get("priceBeforeTax")->getData() !== $priceBeforeTax)) {
-            //dd($form->get("priceBeforeTax")->getData());
+         
             if(isset($VAT)){
                 $newPriceIncVAT = $priceBeforeTax * (1 + $VAT);
                 $form->get('priceIncVAT')->setData((string)$newPriceIncVAT);
-                //$form->setData($priceIncVAT)
+       
             } else if(isset($priceIncVAT)){
-                $VAT = $priceIncVAT - $priceBeforeTax;
+                //$VAT = (($priceIncVAT - $priceBeforeTax)$priceBeforeTax)*100;
             }
         }
 
@@ -54,7 +47,7 @@ class MaterialEventSubscriber implements EventSubscriberInterface
                 $newPriceBeforeTax = $priceIncVAT / (1 + $VAT);
                 $form->get('priceBeforeTax')->setData((string)$newPriceBeforeTax);
             } else if(isset($priceBeforeTax)){
-                $VAT = $priceIncVAT - $priceBeforeTax;
+                //$VAT = (($priceIncVAT - $priceBeforeTax)$priceBeforeTax)*100;
             }
         
         }

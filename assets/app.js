@@ -25,7 +25,6 @@ import "./styles/app.css";
 //       details: {
 //         display: DataTable.Responsive.display.modal({
 //           header: function (row) {
-//             console.log(row);
 //             var data = row.data();
 //             return "Details for " + data[0] + " " + data[1];
 //           },
@@ -146,11 +145,8 @@ import "./styles/app.css";
 // });
 	//datatable.buttons('.update').disable();
 //   $('update').on('click', function(){
-//     console.log('row');
 //    var tr = $(this).closest('button.dt-button.update');
-//    console.log('tr',tr),
 //     var row = datatable.row['tr'],
-//     console.log(row);
 //  })
 // /**
 //  * Permet de convertir un objet date en chaine de caractère au format local FR

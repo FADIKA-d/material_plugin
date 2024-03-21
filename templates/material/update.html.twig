@@ -8,7 +8,7 @@
 	<div class="flex-grow-1 px-4">
 		<h1 class="text-center my-5">Modifier</h1>
         
-        {% include "partials/_form.html.twig"  with {form : form, route_path: path('app_material_show', {'id' : id} )} %}
+        {% include "partials/_form.html.twig"  with {form : form, route_path: path('app_material_update', {'id' : id} )} %}
         
 	</div>
 {% endblock %}

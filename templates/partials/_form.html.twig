@@ -1,9 +1,7 @@
   <div class="row justify-content-center">
     <div class="col-md-6">
         {{ form_start(form, {'action': route_path, attr: { id: 'material_form' } }) }}
-            {# <div class="row"> #}
             {{ form_widget(form) }}
-            {# </div> #}
             <div class="d-grid gap-3">
                 <button class="btn btn-primary">Valider</button>
             </div>
@@ -17,26 +15,33 @@
     const form_select_priceIncVAT = document.getElementById('material_priceIncVAT');
     const form_select_priceBeforeTax = document.getElementById('material_priceBeforeTax');
    
-    // Écoute de l'événement 'change' sur cet élément
-    //form_select_VAT.addEventListener('change', (e) => changeOptions(e));
+    // Écoute de l'événement pour le changement de sélection de la TVA dans un formulaire
     form_select_VAT.addEventListener('change', function(event) {
-    // Accéder à la nouvelle valeur modifiée
+
+   // Récupérer la nouvelle valeur sélectionnée et la convertir en nombre
     var newValue = Number(event.target.value);
+
+    // Calculer le prix TTC en fonction du prix HT et du taux de TVA sélectionné, arrondi à 2 décimales
     form_select_priceIncVAT.value = (form_select_priceBeforeTax.value * (1+ newValue)).toFixed(2);
-    console.log(form_select_priceBeforeTax.value );
+
     });
 
+// Écoute de l'événement pour le changement de sélection du prix HT dans un formulaire
     form_select_priceBeforeTax.addEventListener('change', function(event) {
-        // Accéder à la nouvelle valeur modifiée
+
+       // Récupérer la nouvelle valeur sélectionnée et la convertir en nombre
         var newValue = Number(event.target.value);
-        form_select_priceIncVAT.value = (newValue * (1+ Number(form_select_VAT.value))).toFixed(2);
+ // Calculer le prix TTC en fonction du nouveau prix HT et du taux de TVA sélectionné
+form_select_priceIncVAT.value = (newValue * (1 + Number(form_select_VAT.value))).toFixed(2);
     });
-    
+
+    // Écoute de l'événement pour le changement de sélection du prix TTC dans un formulaire
     form_select_priceIncVAT.addEventListener('change', function(event) {
-        // Accéder à la nouvelle valeur modifiée
+       // Récupérer la nouvelle valeur sélectionnée et la convertir en nombre
         var newValue = Number(event.target.value);
+         // Calculer le prix HT en fonction du nouveau prix TTC et du taux de TVA sélectionné
+
         form_select_priceBeforeTax.value = (newValue * (1 - Number(form_select_VAT.value))).toFixed(2);
     });
-
 
 </script>

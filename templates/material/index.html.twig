@@ -110,8 +110,8 @@
 								var date = formatDate(created_at);
 								
                         	//e.stopPropagation();
-                        	this.popover(' <div class="row"><div class="col-md-10"><p class="ms-3">Quantité <span class="badge bg-secondary">'+ data["quantity"]+'</span></p><ul class="list-group list-group-horizontal-lg my-2 ms-2 w-100"><li class="list-group-item list-group-item-light ms-2 w-50 align-items-center">Prix HT</li><li class="list-group-item w-50 align-items-center">'+ data["priceBeforeTax"]+'€</li></ul><ul class="list-group list-group-horizontal-lg my-2 ms-2 w-100 "><li class="list-group-item list-group-item-light ms-2 w-50 align-items-center">TVA</li><li class="list-group-item w-50 align-items-center">'+  (data.VAT.value)*100+'%</li></ul><ul class="list-group list-group-horizontal-lg my-2 ms-2 w-100"><li class="list-group-item list-group-item-light ms-2 w-50 align-items-center">Prix TTC</li><li class="list-group-item w-50 align-items-center">'+ data["priceIncVAT"]+'€</li></ul> <p class="ms-3">Date de création : '+ date +'</p></div></div>', {
-							popoverTitle: '<p class="lead align-self-end justify-content-end ">Infos produit </p>',
+                        	this.popover('<div class="border-top bg-light"><p class="h5 mx-2 my-4">Quantité : <span class="badge bg-secondary">'+ data["quantity"]+'</span></p><ul class="list-group list-group-horizontal-lg m-2"><li class="list-group-item list-group-item-light px-2 w-50 text-nowrap align-items-center">Prix HT</li><li class="list-group-item px-2 w-50 text-nowrap align-items-center">'+ data["priceBeforeTax"]+'€</li></ul><ul class="list-group list-group-horizontal-lg m-2 text-nowrap align-items-center"><li class="list-group-item list-group-item-light px-2 w-50 text-nowrap align-items-center">TVA</li><li class="list-group-item px-2 w-50 text-nowrap align-items-center">'+  (data.VAT.value)*100+'%</li></ul><ul class="list-group list-group-horizontal-lg m-2"><li class="list-group-item list-group-item-light px-2 w-50 text-nowrap align-items-center">Prix TTC</li><li class="list-group-item px-2 w-50 text-nowrap align-items-center">'+ data["priceIncVAT"]+'€</li></ul> <p class="m-2 ">Date de création : '+ date +'</p></div>', {
+							popoverTitle: '<p class="font-weight-bold lead align-self-end justify-content-end ">Infos produit </p>',
                         });
                     }
                 },
@@ -171,7 +171,6 @@
 					name: "VAT",
 					data: "VAT",
 					render: function(data){
-            // Insérer ici la logique pour afficher les valeurs de l'objet
 					var VATValue = (data.value)*100;
             		return  VATValue + "%"; 
         		},
@@ -199,51 +198,71 @@
 				],
 				
 			});
+			
+// Fonction pour décrémenter la quantité de materiel
+// Lorsqu'un élément avec la classe 'decrement' dans une cellule est cliqué dans le datatable
+datatable.on('click', 'td.decrement', function() {
+    // Récupérer la cellule correspondante dans le datatable
+    var cell = datatable.cell(this);
+    
+    // Récupérer le contenu rendu de la cellule
+    var row = datatable.cell(this).render();
+    
+    // Récupérer l'identifiant (id) de la ligne associée à la cellule
+    var id = row["id"];
+    
+    // Avant l'envoi de la requête AJAX, ajouter l'identifiant (id) du matériau aux données
+    datatable.on('preXhr.dt', function(e, settings, data) {
+        data.material_id = id;
+    });
+    
+    // Décrémenter la valeur actuelle de la cellule et mettre à jour l'affichage dans le datatable
+    cell.data(cell.data() - 1).draw();
+})
 
-			datatable.on('click','td.decrement', function(){
-				var cell = datatable.cell(this);
-				var row = datatable.cell(this).render();
-				var id = row["id"];
-				datatable.on('preXhr.dt', function (e, settings, data) {
-				data.material_id = id;
-				});
+// Fonction pour afficher le toast
+// Lorsqu'une requête AJAX est terminée dans le datatable
+datatable.on('xhr', function() {
 
-				cell.data(cell.data()-1).draw();
+    // Récupérer les données JSON de la réponse AJAX
+    var json = datatable.ajax.json();
+    
+    // Vérifier si la propriété 'is_send_mess' est vraie dans les données JSON
+    if (json.is_send_mess) {
 
-			});
-
-			datatable.on('xhr', function() {
-				var json = datatable.ajax.json();
-    			
-				if(json.is_send_mess){
-					const toast = document.getElementById('liveToast')
-					console.log(toast);
-					const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast)
-					toastBootstrap.show()
-			}
-		})
-	});
-			function update(id){
-				 let update = '<a href="/material/update/' + id + '">Modifier</a>';
-				 return update
-			}
+        // Récupérer l'élément de toast dans le document HTML
+        const toast = document.getElementById('liveToast');
+        
+        // Obtenir ou créer une instance du toast Bootstrap associé à l'élément de toast
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+        
+        // Afficher le toast à l'écran
+        toastBootstrap.show();
+    }
+});
 	
 			/**
-			* Permet de convertir un objet date en chaine de caractère au format local FR
+			* Fonction pour convertir un objet date en chaine de caractère au format local FR
 			* @param {Date} date
 			* @returns string
 			*/
 			function formatDate(date) {
-			// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10
+
+			// Récupérer le jour de la date et ajouter un zéro devant lorsque la valeur de la date est inférieure à 10
 			let day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay();
-			// On ajoute un 0 devant lorsque la valeur de la date est inférieure à 10. On ajoute 1 car les mois sont numéro de 0 à 11 en JS
+
+			//Récupérer le mois de la date et ajouter un zéro devant lorsque la valeur de la date est inférieure à 10. On ajoute 1 car les mois sont numéro de 0 à 11 en JS
 			let month =
 				date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+
+			// Récupérer l'année de la date
 			let year = date.getFullYear();
+
+			// Retourner la date formatée sous forme de chaîne "jour/mois/année"
 			return `${day}/${month}/${year}`;
 			}
 		
-
-		
+})
+	
 	</script>
 {% endblock %}
