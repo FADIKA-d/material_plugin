@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\MaterialRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,9 +30,13 @@ class Material
     #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]
     private ?string $priceIncVAT = null;
 
-    #[ORM\ManyToOne(inversedBy: 'materials')]
+    #[ORM\ManyToOne(targetEntity: VAT::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?VAT $VAT = null;
+
+    public function __construct() {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {

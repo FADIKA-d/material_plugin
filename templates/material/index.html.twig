@@ -1,41 +1,268 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}Liste du matériel
 {% endblock %}
 
+
 {% block body %}
-
-	<div class="px-4">
-		<h1 class="display-3">Stock de materiel</h1>
-
-		<table style="width: 100%" id="material-list" class="table table-hover table-striped">
+	<div class="flex-grow-1 px-4">
+	
+		<h1 class="text-center my-5">Stock de materiel</h1>
+		<table style="width: 100%" id="material-list" class="table table-hover table-striped nowrap">
 			<thead>
 				<tr>
-					<th scope="col">id</th>
-					<th scope="col">Nom</th>
-					<th scope="col">Quantité</th>
-					<th scope="col">Prix HT</th>
-					{# <th scope="col">Taux de TVA</th> #}
-					<th scope="col">prix TTC</th>
-					<th scope="col">Date de création</th>
+					<th class="text-center" scope="col">id</th>
+					<th class="text-center" scope="col">Nom</th>
+					<th class="text-center" scope="col">Date de création</th>
+					<th class="text-center" scope="col">Prix HT</th>
+					<th class="text-center" scope="col">TVA</th>
+					<th class="text-center" scope="col">Prix TTC</th>
+					<th class="text-center" scope="col">Quantité</th>
+					<th class="text-center" scope="col">Décrémenter</th>
 				</tr>
 			</thead>
-			<tbody>
-
-				{# {% for material in materials %}
-					<tr>
-				      <td><li><a href="">{{ material.name }}</a></li></td>
-				      <td>{{ material.createdAt|date("d/m/Y") }}</td>
-				      <td>{{ material.priceBeforeTax}}{{ 'EUR'|currency_symbol }}</td>
-					  <td>{{ (material.VAT.value)*100}} &percnt;</td>
-				      <td>{{ material.priceIncVAT}}{{'EUR'|currency_symbol }}</td>
-				      <td>{{ material.quantity}}</td>
-					</tr>
-					{% endfor %} #}
-			</tbody>
+			<tfooter>
+				<tr>
+					<th class="text-center" scope="col">id</th>
+					<th class="text-center" scope="col">Nom</th>
+					<th class="text-center" scope="col">Date de création</th>
+					<th class="text-center" scope="col">Prix HT</th>
+					<th class="text-center" scope="col">TVA</th>
+					<th class="text-center" scope="col">Prix TTC</th>
+					<th class="text-center" scope="col">Quantité</th>
+					<th class="text-center" scope="col"></th>
+				</tr>
+			</tfooter>
 		</table>
 	</div>
+{% endblock %}
+
+{% block customscript %}
 	<script>
-		let url_path = "{{ url('app_material_index') }}"
+ let url_path = "{{ url('app_material_index') }}"
+			$(document).ready(function () {
+			var datatable = $("#material-list").DataTable({
+				ajax: url_path,
+				language: {
+				"info": "Affichage de _START_ à  _END_ sur _TOTAL_ entrées",
+    			"infoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+    			"infoFiltered": "(filtrées depuis un total de _MAX_ entrées)",
+   				"lengthMenu": "Afficher _MENU_ entrées",
+    			"paginate": {
+        			"first": "Première",
+        			"last": "Dernière",
+        			"next": "Suivante",
+        			"previous": "Précédente"
+    			},
+    			"zeroRecords": "",
+				"search": "Recherche",
+				},
+				processing: true,
+				serverSide: true,
+				//info: false,
+				pageLength: 5,
+				paging: true,
+				lengthMenu: [5, 10, 15, 20, { label: "All", value: -1 }],
+				select: true,
+				responsive: {
+				details: {
+					display: DataTable.Responsive.display.modal({
+					header: function (row, type, val, meta) {
+						var data = row.data();
+						return "Details pour " + data["name"];
+					},
+					}),
+					renderer: DataTable.Responsive.renderer.tableAll({
+					tableClass: "table",
+					}),
+				},
+				},
+				layout: {
+					top2Start: {
+						buttons: [
+						{	
+							text : 'Ajouter',
+							className : 'update', 
+							action: function () {
+								window.location ='/material/new/';
+							},
+						},
+						{	
+							extend: 'selected',
+							text : 'Modifier',
+							className : 'update', 
+							action: function (e, dt, button, config) {
+								
+								var data = dt.row({ selected: true }).data();
+								var id = data["id"];
+								
+								window.location ='/material/update/' + id ;
+							},
+						},
+						{
+							extend: 'selected',
+							text : 'Détails',
+							className : 'details', 
+                    		action: function (e, dt, button, config) {
+								var data = dt.row({ selected: true }).data();
+								let created_at = new Date(data["createdAt"]);
+								var date = formatDate(created_at);
+								
+                        	//e.stopPropagation();
+                        	this.popover('<div class="border-top bg-light"><p class="h5 mx-2 my-4">Quantité : <span class="badge bg-secondary">'+ data["quantity"]+'</span></p><ul class="list-group list-group-horizontal-lg m-2"><li class="list-group-item list-group-item-light px-2 w-50 text-nowrap align-items-center">Prix HT</li><li class="list-group-item px-2 w-50 text-nowrap align-items-center">'+ data["priceBeforeTax"]+'€</li></ul><ul class="list-group list-group-horizontal-lg m-2 text-nowrap align-items-center"><li class="list-group-item list-group-item-light px-2 w-50 text-nowrap align-items-center">TVA</li><li class="list-group-item px-2 w-50 text-nowrap align-items-center">'+  (data.VAT.value)*100+'%</li></ul><ul class="list-group list-group-horizontal-lg m-2"><li class="list-group-item list-group-item-light px-2 w-50 text-nowrap align-items-center">Prix TTC</li><li class="list-group-item px-2 w-50 text-nowrap align-items-center">'+ data["priceIncVAT"]+'€</li></ul> <p class="m-2 ">Date de création : '+ date +'</p></div>', {
+							popoverTitle: '<p class="font-weight-bold lead align-self-end justify-content-end ">Infos produit </p>',
+                        });
+                    }
+                },
+						
+						],
+					},
+					top2End: {
+						buttons: ["pdfHtml5"],
+					},
+				},
+				
+				// buttons : true,
+				
+				columnDefs: [
+				{
+					target: '_all', 
+					className: 'dt-center'
+				},
+				{
+					target: [0], 
+					 visible: false,
+				},
+				{
+					target: [0, 2, 3, 4, 5, 6],
+					searchable: false,
+				},
+				{
+					target: [ 7],
+					orderable: false,
+				},
+				{
+				target: 2,
+				render: function (data, type) {
+				let created_at = new Date(data);
+				return formatDate(created_at);
+				},
+				},
+				],
+				columns: [
+				{
+					name: "id",
+					data: "id",
+				},
+				{
+					name: "name",
+					data: "name",
+				},
+				{
+					name: "createdAt",
+					data: "createdAt",
+				},
+				{
+					name: "priceBeforeTax",
+					data: "priceBeforeTax",
+				},
+				{
+					name: "VAT",
+					data: "VAT",
+					render: function(data){
+					var VATValue = (data.value)*100;
+            		return  VATValue + "%"; 
+        		},
+				},
+				{
+					name: "priceIncVAT",
+					data: "priceIncVAT",
+				},
+				{
+					name: "quantity",
+					data: "quantity",
+				},
+				{
+					name: "decrement",
+					data: null,
+					className: "decrement",
+					render: function(data, type, row ) {
+						return `<button class="dt-center decrement btn btn-sm btn-secondary">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-lg" viewBox="0 0 16 16">
+  								<path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8"/>
+							</svg>
+						</button>`
+					}
+				},
+				],
+				
+			});
+			
+// Fonction pour décrémenter la quantité de materiel
+// Lorsqu'un élément avec la classe 'decrement' dans une cellule est cliqué dans le datatable
+datatable.on('click', 'td.decrement', function() {
+    // Récupérer la cellule correspondante dans le datatable
+    var cell = datatable.cell(this);
+    
+    // Récupérer le contenu rendu de la cellule
+    var row = datatable.cell(this).render();
+    
+    // Récupérer l'identifiant (id) de la ligne associée à la cellule
+    var id = row["id"];
+    
+    // Avant l'envoi de la requête AJAX, ajouter l'identifiant (id) du matériau aux données
+    datatable.on('preXhr.dt', function(e, settings, data) {
+        data.material_id = id;
+    });
+    
+    // Décrémenter la valeur actuelle de la cellule et mettre à jour l'affichage dans le datatable
+    cell.data(cell.data() - 1).draw();
+})
+
+// Fonction pour afficher le toast
+// Lorsqu'une requête AJAX est terminée dans le datatable
+datatable.on('xhr', function() {
+
+    // Récupérer les données JSON de la réponse AJAX
+    var json = datatable.ajax.json();
+    
+    // Vérifier si la propriété 'is_send_mess' est vraie dans les données JSON
+    if (json.is_send_mess) {
+
+        // Récupérer l'élément de toast dans le document HTML
+        const toast = document.getElementById('liveToast');
+        
+        // Obtenir ou créer une instance du toast Bootstrap associé à l'élément de toast
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+        
+        // Afficher le toast à l'écran
+        toastBootstrap.show();
+    }
+});
+	
+			/**
+			* Fonction pour convertir un objet date en chaine de caractère au format local FR
+			* @param {Date} date
+			* @returns string
+			*/
+			function formatDate(date) {
+
+			// Récupérer le jour de la date et ajouter un zéro devant lorsque la valeur de la date est inférieure à 10
+			let day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay();
+
+			//Récupérer le mois de la date et ajouter un zéro devant lorsque la valeur de la date est inférieure à 10. On ajoute 1 car les mois sont numéro de 0 à 11 en JS
+			let month =
+				date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+
+			// Récupérer l'année de la date
+			let year = date.getFullYear();
+
+			// Retourner la date formatée sous forme de chaîne "jour/mois/année"
+			return `${day}/${month}/${year}`;
+			}
+		
+})
+	
 	</script>
 {% endblock %}

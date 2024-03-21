@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau matériel
+{% endblock %}
+
+{% block body %}
+
+	<div class="flex-grow-1 px-4">
+		<h1 class="text-center my-5">Nouveau matériel</h1>
+        
+        {% include "partials/_form.html.twig"  with {form : form, route_path: path('app_material_new')} %}
+        
+	</div>
+{% endblock %}

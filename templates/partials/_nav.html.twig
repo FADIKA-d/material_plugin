@@ -61,39 +61,39 @@
 {# sidebar #}
 
 <div class="d-flex flex-column flex-shrink-0 p-3 bg-light vh-100" style="width: 280px;">
-	<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-		<img src="{{asset('images/logo.jpg')}}" alt="">
+	<a href="{{ path('app_home') }}" class="w-100 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+		<img class="img-fluid" src="{{asset('images/logo.jpg')}}" alt="">
 	</a>
 	<hr>
 	<ul class="nav nav-pills flex-column mb-auto">
 		<li class="nav-item">
-			<a href="#" class="nav-link active" aria-current="page">
+			<a href="#" class="nav-link link-dark" aria-current="page">
 				<svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>
-				Home
+				Accueil
 			</a>
 		</li>
 		<li>
 			<a href="#" class="nav-link link-dark">
 				<svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
-				Dashboard
+				Tableau de bord
 			</a>
 		</li>
 		<li>
 			<a href="#" class="nav-link link-dark">
 				<svg class="bi me-2" width="16" height="16"><use xlink:href="#table"/></svg>
-				Orders
+				Commandes
 			</a>
 		</li>
 		<li>
-			<a href="#" class="nav-link link-dark">
+			<a href="#" class="nav-link active">
 				<svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
-				Products
+				Produits
 			</a>
 		</li>
 		<li>
 			<a href="#" class="nav-link link-dark">
 				<svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
-				Customers
+				Clients
 			</a>
 		</li>
 	</ul>
